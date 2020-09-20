@@ -1,7 +1,6 @@
 export function getPeople ({ commit }, page) {
     commit('setLoading', true)
     return this._vm.$axios.get(`/people/${page}`).then(res => {
-        console.log("getPeople -> res.data", res.data)
         const people = res.data.results
         commit('setPeople', people,)
         const count = res.data.count
