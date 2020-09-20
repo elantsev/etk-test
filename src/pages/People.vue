@@ -1,6 +1,18 @@
 <template>
   <div class="people">
     <h4 class="people__header">People</h4>
+    <q-input
+      color="white"
+      bg-color="light-blue"
+      filled
+      v-model="searchStr"
+      @keyup.enter="onEnter"
+      label="Search by name"
+    >
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
     <div class="people__list">
       <c-person
         class="people__item"
@@ -9,6 +21,15 @@
         :person="person"
         type="preview"
       ></c-person>
+    </div>
+    <div class="pagination">
+      <router-link
+        class="pagination__link"
+        v-for="n in pages"
+        :to="`/people/${linkGen('page', n)}`"
+        :key="n"
+        >{{ n }}</router-link
+      >
     </div>
   </div>
 </template>
@@ -21,15 +42,39 @@ import CPerson from '../components/CPerson'
 export default {
   components: { CPerson },
   name: 'People',
-  computed: mapState('people', {
-    people: 'people',
-    loading: 'loading',
-  }),
+  data: function () {
+    return {
+      searchStr: ''
+    }
+  },
+  computed: {
+    ...mapState('people', {
+      people: 'people',
+      loading: 'loading',
+      pages: state => Math.ceil(state.count / 10),
+    }
+    ),
+    page () {
+      return this.$route.query.page || 1
+    },
+
+  },
   methods: {
-    ...mapActions('people', ['getPeople',])
+    ...mapActions('people', ['getPeople',]),
+    linkGen (key, value) {
+      return `?${key}=${value}`;
+    },
+    onEnter () {
+      this.getPeople(`${this.linkGen('search', this.searchStr)}`)
+    },
+  },
+  watch: {
+    page () {
+      this.getPeople(this.linkGen('page', this.page))
+    }
   },
   created () {
-    this.getPeople();
+    this.getPeople(this.linkGen('page', this.page));
   },
 }
 </script>
@@ -56,6 +101,32 @@ export default {
     padding: 10px;
     margin: 10px;
     border: 1px solid $primary;
+  }
+  &__pagination {
+    display: flex;
+    justify-content: center;
+  }
+  .router-link-exact-active {
+    background: $primary;
+    color: #fff;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    &__link {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+      &:hover,
+      .router-link-exact-active {
+        background: $primary;
+        color: #fff;
+      }
+    }
   }
 }
 </style>

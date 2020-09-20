@@ -21,10 +21,8 @@ import film from '../components/CFilm'
 export default {
   name: 'films',
   components: { film },
-  computed: mapState('films', {
-    films: 'films',
-    loading: 'loading',
-  }),
+  computed:
+    mapState('films', ['films', 'loading']),
   methods: {
     ...mapActions('films', ['getFilms',])
   },

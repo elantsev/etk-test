@@ -1,7 +1,8 @@
 export default function () {
   return {
     loading: false,
-    films: undefined,
-    film: undefined
+    films: [],
+    // film: undefined,
+    filmsHash: {}
   }
 }
