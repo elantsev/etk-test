@@ -1,6 +1,18 @@
 <template>
   <div class="people">
     <h4 class="people__header">People</h4>
+    <q-input
+      color="white"
+      bg-color="light-blue"
+      filled
+      v-model="searchStr"
+      @keyup.enter="onEnter"
+      label="Search by name"
+    >
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
     <div class="people__list">
       <c-person
         class="people__item"
@@ -14,7 +26,7 @@
       <router-link
         class="pagination__link"
         v-for="n in pages"
-        :to="`/people/${linkGen(n)}`"
+        :to="`/people/${linkGen('page', n)}`"
         :key="n"
         >{{ n }}</router-link
       >
@@ -30,6 +42,11 @@ import CPerson from '../components/CPerson'
 export default {
   components: { CPerson },
   name: 'People',
+  data: function () {
+    return {
+      searchStr: ''
+    }
+  },
   computed: {
     ...mapState('people', {
       people: 'people',
@@ -40,20 +57,24 @@ export default {
     page () {
       return this.$route.query.page || 1
     },
+
   },
   methods: {
     ...mapActions('people', ['getPeople',]),
-    linkGen (pageNum) {
-      return pageNum === 1 ? "" : `?page=${pageNum}`;
-    }
+    linkGen (key, value) {
+      return `?${key}=${value}`;
+    },
+    onEnter () {
+      this.getPeople(`${this.linkGen('search', this.searchStr)}`)
+    },
   },
   watch: {
     page () {
-      this.getPeople(this.linkGen(this.page))
+      this.getPeople(this.linkGen('page', this.page))
     }
   },
   created () {
-    this.getPeople(this.linkGen(this.page));
+    this.getPeople(this.linkGen('page', this.page));
   },
 }
 </script>
