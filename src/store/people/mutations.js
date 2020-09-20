@@ -9,3 +9,6 @@ export function setPerson (state, person) {
 export function setLoading (state, loading) {
     state.loading = loading
 }
+export function setCount (state, count) {
+    state.count = count
+}

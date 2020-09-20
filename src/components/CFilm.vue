@@ -46,7 +46,6 @@ export default {
   props: ['film', 'type', 'url'],
   computed: {
     ...mapState('films', {
-      loading: 'loading',
       filmH: function (state) {
         const key = this.url || `http://swapi.dev/api/films/${this.$route.params.id}/`
         return state.filmsHash?.[key]

@@ -10,6 +10,15 @@
         type="preview"
       ></c-person>
     </div>
+    <div class="pagination">
+      <router-link
+        class="pagination__link"
+        v-for="n in pages"
+        :to="`/people/${linkGen(n)}`"
+        :key="n"
+        >{{ n }}</router-link
+      >
+    </div>
   </div>
 </template>
 
@@ -21,15 +30,30 @@ import CPerson from '../components/CPerson'
 export default {
   components: { CPerson },
   name: 'People',
-  computed: mapState('people', {
-    people: 'people',
-    loading: 'loading',
-  }),
+  computed: {
+    ...mapState('people', {
+      people: 'people',
+      loading: 'loading',
+      pages: state => Math.ceil(state.count / 10),
+    }
+    ),
+    page () {
+      return this.$route.query.page || 1
+    },
+  },
   methods: {
-    ...mapActions('people', ['getPeople',])
+    ...mapActions('people', ['getPeople',]),
+    linkGen (pageNum) {
+      return pageNum === 1 ? "" : `?page=${pageNum}`;
+    }
+  },
+  watch: {
+    page () {
+      this.getPeople(this.linkGen(this.page))
+    }
   },
   created () {
-    this.getPeople();
+    this.getPeople(this.linkGen(this.page));
   },
 }
 </script>
@@ -56,6 +80,32 @@ export default {
     padding: 10px;
     margin: 10px;
     border: 1px solid $primary;
+  }
+  &__pagination {
+    display: flex;
+    justify-content: center;
+  }
+  .router-link-exact-active {
+    background: $primary;
+    color: #fff;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    &__link {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+      &:hover,
+      .router-link-exact-active {
+        background: $primary;
+        color: #fff;
+      }
+    }
   }
 }
 </style>

@@ -1,8 +1,11 @@
-export function getPeople ({ commit }) {
+export function getPeople ({ commit }, page) {
     commit('setLoading', true)
-    return this._vm.$axios.get('/people/').then(res => {
+    return this._vm.$axios.get(`/people/${page}`).then(res => {
+        console.log("getPeople -> res.data", res.data)
         const people = res.data.results
         commit('setPeople', people,)
+        const count = res.data.count
+        commit('setCount', count,)
     }).catch(error => {
         this._vm.$q.notify({
             message: error.message,

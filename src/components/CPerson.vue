@@ -45,7 +45,6 @@ export default {
   props: ['person', 'type', 'url'],
   computed: {
     ...mapState('people', {
-      loading: 'loading',
       personH: function (state) {
         const key = this.url || `http://swapi.dev/api/people/${this.$route.params.id}/`
         return state.personHash?.[key]

@@ -2,6 +2,7 @@ export default function () {
   return {
     loading: false,
     people: [],
-    personHash: {}
+    personHash: {},
+    count: 1
   }
 }

@@ -27,26 +27,15 @@ export default {
   name: 'Film',
   components: { CFilm, CPreloader },
   computed: {
-    ...mapState('films', {
-      loading: 'loading',
-      film: 'film',
-    }),
-    f: function () {
-      return this.film ?? this.filmS;
-    },
-    filmId: function () {
-      return this.film?.url.replace('http://swapi.dev/api/films/', '') ?? '';
-    }
+    ...mapState('films', ['loading', 'film',]),
   },
   methods: {
     ...mapActions('films', ['getFilm',])
   },
   filters: { formatDate },
   created () {
-    if (!this.film) {
-      const filmId = this.$route.params.id
-      this.getFilm(filmId);
-    }
+    const filmId = this.$route.params.id
+    this.getFilm(filmId);
   },
 }
 </script>

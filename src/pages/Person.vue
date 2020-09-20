@@ -2,7 +2,7 @@
   <div class="person">
     <h4 class="person__header">Person</h4>
     <c-preloader v-if="loading"></c-preloader>
-    <c-person v-else :person="personS" type="full"></c-person>
+    <c-person v-else :person="person" type="full"></c-person>
   </div>
 </template>
 
@@ -15,10 +15,7 @@ export default {
   name: 'Person',
   components: { CPerson, CPreloader },
   computed: {
-    ...mapState('people', {
-      loading: 'loading',
-      personS: 'person',
-    }),
+    ...mapState('people', ['loading', 'person',]),
   },
   methods: {
     ...mapActions('people', ['getPerson',])
