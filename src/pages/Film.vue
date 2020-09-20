@@ -42,10 +42,10 @@ export default {
     ...mapActions('films', ['getFilm',])
   },
   filters: { formatDate },
-  async created () {
+  created () {
     if (!this.film) {
       const filmId = this.$route.params.id
-      await this.getFilm(filmId);
+      this.getFilm(filmId);
     }
   },
 }

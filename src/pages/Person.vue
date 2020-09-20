@@ -23,9 +23,9 @@ export default {
   methods: {
     ...mapActions('people', ['getPerson',])
   },
-  async created () {
+  created () {
     const personId = this.$route.params.id
-    await this.getPerson(personId);
+    this.getPerson(personId);
   },
 }
 </script>

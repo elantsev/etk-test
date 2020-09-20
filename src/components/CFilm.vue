@@ -1,35 +1,38 @@
 <template>
   <div class="film">
-    <p v-if="type === 'titleOnly'" class="film__header">
-      {{ film.title }}
-    </p>
-    <router-link v-if="type === 'preview'" append :to="filmId">
-      <h5 class="film__header"><b>title:</b> {{ film.title }}</h5>
-    </router-link>
-
-    <h5 v-if="type === 'full'" class="film__header">
-      <b>title:</b> {{ film.title }}
-    </h5>
-
-    <template v-if="type !== 'titleOnly'"
-      ><p class="film__field"><b>director:</b> {{ film.director }}</p>
-      <p class="film__field"><b>producer:</b> {{ film.producer }}</p>
-      <p class="film__field"><b>release date: </b> {{ film.release_date }}</p>
-      <p class="film__field"><b>opening crawl:</b> {{ film.opening_crawl }}</p>
-      <p class="film__field">
-        <b>created: </b> {{ film.created | formatDate }}
+    <router-link v-if="type === 'titleOnly'" :to="`/films/${filmId}/`">
+      <p class="film__header">
+        {{ f.title }}
       </p>
-      <p class="film__field"><b>edited:</b> {{ film.edited | formatDate }}</p>
-    </template>
+    </router-link>
+    <div v-else>
+      <router-link v-if="type === 'preview'" append :to="filmId">
+        <h5 class="film__header"><b>title:</b> {{ f.title }}</h5>
+      </router-link>
 
-    <!-- <div v-if="type !== 'full'">
-      <c-film
-        v-for="film in people.films"
-        :url="film"
-        :key="film"
-        type="titleOnly"
-      ></c-film>
-    </div> -->
+      <h5 v-if="type === 'full'" class="film__header">
+        <b>title:</b> {{ f.title }}
+      </h5>
+
+      <template v-if="type !== 'titleOnly'">
+        <p class="film__field"><b>director:</b> {{ f.director }}</p>
+        <p class="film__field"><b>producer:</b> {{ f.producer }}</p>
+        <p class="film__field"><b>release date: </b> {{ f.release_date }}</p>
+        <p class="film__field"><b>opening crawl:</b> {{ f.opening_crawl }}</p>
+        <p class="film__field"><b>created: </b> {{ f.created | formatDate }}</p>
+        <p class="film__field"><b>edited:</b> {{ f.edited | formatDate }}</p>
+      </template>
+
+      <div v-if="type === 'full'">
+        <p>Сharacters in {{ f.title }}</p>
+        <c-person
+          v-for="character in f.characters"
+          :url="character"
+          :key="character"
+          type="nameOnly"
+        ></c-person>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,28 +42,29 @@ import { formatDate } from '../utils'
 
 export default {
   name: 'CFilm',
+  components: { CPerson: () => import('./CPerson.vue') },
   props: ['film', 'type', 'url'],
   computed: {
     ...mapState('films', {
       loading: 'loading',
-      filmS: 'film',
-      // filmH: state => state.filmsHash[url],
+      filmH: function (state) {
+        const key = this.url || `http://swapi.dev/api/films/${this.$route.params.id}/`
+        return state.filmsHash?.[key]
+      },
     }),
     f: function () {
-      return this.film ?? this.filmS;
+      return this.film ?? this.filmH ?? {};
     },
     filmId: function () {
-      return this.film?.url.replace('http://swapi.dev/api/films/', '') ?? '';
+      return this.f?.url?.replace('http://swapi.dev/api/films/', '')?.replace('/', '') ?? '';
     }
   },
   filters: { formatDate },
-  methods: {
-    ...mapActions('films', ['getFilm']),
-  },
-  async created () {
+  methods: { ...mapActions('films', ['getFilm']) },
+  created () {
     if (this.type === 'titleOnly') {
-      const filmId = this.url.replace('http://swapi.dev/api/films/', '')
-      await this.getFilm(filmId);
+      const filmId = this.url?.replace('http://swapi.dev/api/films/', '')?.replace('/', '')
+      this.getFilm(filmId);
     }
   },
 }
