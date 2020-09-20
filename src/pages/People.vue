@@ -1,6 +1,6 @@
 <template>
   <div class="people">
-    <h4 class="people__header">People</h4>
+    <h4 class="people__header">{{ $t("people.header") }}</h4>
     <q-input
       color="white"
       bg-color="light-blue"

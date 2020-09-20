@@ -1,6 +1,6 @@
 <template>
   <div class="films">
-    <h4 class="films__header">Films</h4>
+    <h4 class="films__header">{{ $t("films.header") }}</h4>
     <div class="films__list">
       <film
         class="films__item"

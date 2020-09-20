@@ -11,17 +11,40 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title>The Star Wars</q-toolbar-title>
+        <q-toolbar-title>{{ $t("mainLayout.title") }}</q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-select
+          v-model="lang"
+          :options="langOptions"
+          dense
+          borderless
+          emit-value
+          map-options
+          options-dense
+          bg-color="light-blue"
+          style="min-width: 150px"
+        >
+          <template v-slot:prepend>
+            <q-icon name="language" />
+          </template>
+        </q-select>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-grey-1">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      content-class="bg-grey-1"
+    >
       <q-list>
         <q-item-label header class="text-grey-8">LOGO</q-item-label>
-        <q-item clickable tag="a" to="/films">Films</q-item>
-        <q-item clickable tag="a" to="/people">People</q-item>
+        <q-item clickable tag="a" to="/films">{{
+          $t("mainLayout.sidebar.films")
+        }}</q-item>
+        <q-item clickable tag="a" to="/people">{{
+          $t("mainLayout.sidebar.people")
+        }}</q-item>
       </q-list>
     </q-drawer>
 
@@ -39,9 +62,19 @@ export default {
   // components: { EssentialLink },
   data () {
     return {
-      leftDrawerOpen: false
-      // essentialLinks: linksData
+      leftDrawerOpen: false,
+      lang: this.$i18n.locale,
+      langOptions: [
+        { value: 'en-us', label: 'English' },
+        { value: 'ru', label: 'Русский' }
+      ]
+    }
+  },
+  watch: {
+    lang (lang) {
+      this.$i18n.locale = lang
     }
   }
 }
+
 </script>
