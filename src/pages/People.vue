@@ -26,7 +26,7 @@
       <router-link
         class="pagination__link"
         v-for="n in pages"
-        :to="`/people/${linkGen('page', n)}`"
+        :to="`/people/${linkGen(n, search)}`"
         :key="n"
         >{{ n }}</router-link
       >
@@ -54,27 +54,37 @@ export default {
       pages: state => Math.ceil(state.count / 10),
     }
     ),
+    query () {
+      return this.$route.query
+    },
     page () {
       return this.$route.query.page || 1
+    },
+    search () {
+      return this.$route.query.search
     },
 
   },
   methods: {
     ...mapActions('people', ['getPeople',]),
-    linkGen (key, value) {
-      return `?${key}=${value}`;
+    linkGen (page, search) {
+      if (!page && !search) return ''
+      if (!page) return `?search=${search}`
+      if (!search) return `?page=${page}`;
+      return `?page=${page}&search=${search}`;
     },
     onEnter () {
-      this.getPeople(`${this.linkGen('search', this.searchStr)}`)
+      this.$router.push(`${this.linkGen(0, this.searchStr)}`)
     },
   },
   watch: {
-    page () {
-      this.getPeople(this.linkGen('page', this.page))
+    query () {
+      this.getPeople(this.linkGen(this.page, this.search))
     }
   },
   created () {
-    this.getPeople(this.linkGen('page', this.page));
+    this.getPeople(this.linkGen(this.page, this.search));
+    this.searchStr = this.search
   },
 }
 </script>
